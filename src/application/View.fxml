@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.canvas.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane
+    stylesheets="application/ViewStyle.css"
+    xmlns="http://javafx.com/javafx/8"
+    xmlns:fx="http://javafx.com/fxml"
+    fx:controller="application.Controller">
+    <top>
+        <ToolBar>
+            <items>
+                <Button fx:id="transactionsButton" onAction="#menuAction" text="Tranzakciók" />
+                <Button fx:id="categoriesButton" onAction="#menuAction" text="Kategóriák" />
+            </items>
+        </ToolBar>
+    </top>
+    <center>
+        <StackPane fx:id="centerPane">
+            <children>
+                <SplitPane
+                    fx:id="transactionsPane"
+                    dividerPositions="0, 1">
+                    <items>
+                        <VBox
+                            id="filterPane"
+                            spacing="5">
+                            <padding>
+                                <Insets
+                                    bottom="0"
+                                    left="0"
+                                    right ="0"
+                                    top="5"/>
+                            </padding>
+                            <children>
+                                <Button
+                                    text="Szűrés"
+                                    onAction="#handleRefreshButtonAction"
+                                    minWidth="-Infinity"
+                                    minHeight="50"
+                                    maxWidth="Infinity"/>
+                                <Accordion>
+                                    <panes>
+                                        <TitledPane text="Típus">
+                                            <content>
+                                                <VBox
+                                                    spacing="5">
+                                                    <children>
+                                                        <CheckBox
+                                                            fx:id="incomeFilterCheckBox"
+                                                            text="Bevétel"
+                                                            selected="true"/>
+                                                        <CheckBox
+                                                            fx:id="expenseFilterCheckBox"
+                                                            text="Kiadás"
+                                                            selected="true"/>
+                                                    </children>
+                                                </VBox>
+                                            </content>
+                                        </TitledPane>
+                                        <TitledPane fx:id="tpCategoryFilter"
+                                                    text="Kategória">
+                                            <content>
+                                                <StackPane>
+                                                    <children>
+                                                        <TreeView
+                                                            fx:id="categoryFilterTreeView"
+                                                            showRoot="false"/>
+                                                    </children>
+                                                </StackPane>
+                                            </content>
+                                            <graphic>
+                                                <CheckBox
+                                                    fx:id="categoryFilterCheckBox"/>
+                                            </graphic>
+                                        </TitledPane>
+                                        <TitledPane fx:id="tpDateFilter"
+                                                    text="Dátum">
+                                            <content>
+                                                <GridPane>
+                                                    <columnConstraints>
+                                                        <ColumnConstraints
+                                                            minWidth="100"
+                                                            prefWidth="150"
+                                                            maxWidth="180"
+                                                            hgrow="SOMETIMES" />
+                                                        <ColumnConstraints
+                                                            minWidth="20"
+                                                            prefWidth="30"
+                                                            hgrow="SOMETIMES" />
+                                                    </columnConstraints>
+                                                    <children>
+                                                        <DatePicker
+                                                            fx:id="fromDateFilterDatePicker"
+                                                            GridPane.columnIndex="0"
+                                                            GridPane.rowIndex="0" />
+                                                        <DatePicker
+                                                            fx:id="toDateFilterDatePicker"
+                                                            GridPane.columnIndex="0"
+                                                            GridPane.rowIndex="1" />
+                                                        <Label
+                                                            text="-tól"
+                                                            GridPane.columnIndex="1"
+                                                            GridPane.rowIndex="0" />
+                                                        <Label
+                                                            text="-ig"
+                                                            GridPane.columnIndex="1"
+                                                            GridPane.rowIndex="1" />
+                                                    </children>
+                                                </GridPane>                               
+                                            </content>
+                                            <graphic>
+                                                <CheckBox fx:id="dateFilterCheckBox" />
+                                            </graphic>
+                                        </TitledPane>
+                                        <TitledPane fx:id="tpRegularityFilter"
+                                                    text="Ismétlődés">
+                                            <content>                                                
+                                                <VBox
+                                                    spacing="5">
+                                                    <fx:define>
+                                                        <ToggleGroup fx:id="regularityFilterToggleGroup"/>
+                                                    </fx:define>
+                                                    <children>
+                                                        <RadioButton
+                                                            fx:id="oneWeekFilterRadioButton"
+                                                            text="Legalább hetente"
+                                                            toggleGroup="$regularityFilterToggleGroup"/>
+                                                        <RadioButton
+                                                            fx:id="oneMonthFilterRadioButton"
+                                                            text="Legalább havonta"
+                                                            toggleGroup="$regularityFilterToggleGroup"/>
+                                                        <RadioButton
+                                                            fx:id="oneYearFilterRadioButton"
+                                                            text="Legalább évente"
+                                                            toggleGroup="$regularityFilterToggleGroup"/>
+                                                        <RadioButton
+                                                            fx:id="moreYearFilterRadioButton"
+                                                            text="Ritábban mint évente"
+                                                            toggleGroup="$regularityFilterToggleGroup"/>
+                                                        <RadioButton
+                                                            fx:id="irregularFilterRadioButton"
+                                                            text="Nem ismétlődik"
+                                                            toggleGroup="$regularityFilterToggleGroup"/>
+                                                    </children>
+                                                </VBox>
+                                            </content>
+                                            <graphic>
+                                                <CheckBox fx:id="regularityFilterCheckBox" />
+                                            </graphic>
+                                        </TitledPane>
+                                    </panes>
+                                </Accordion>
+                            </children>
+                        </VBox>          
+                        <SplitPane
+                            id="chartAndTable"
+                            dividerPositions="0.4"
+                            orientation="VERTICAL"
+                            minWidth="400">
+                            <items>
+                                <StackPane
+                                    id="chartPane"
+                                    minHeight="0"
+                                    minWidth="0">
+                                    <children>
+                                        <BarChart
+                                            fx:id="reportChart">
+                                            <xAxis>
+                                                <CategoryAxis side="BOTTOM" />
+                                            </xAxis>
+                                            <yAxis>
+                                                <NumberAxis side="LEFT" />
+                                            </yAxis>
+                                        </BarChart>
+                                    </children>
+                                </StackPane>
+                                <StackPane
+                                    id="tablePane"
+                                    minHeight="0"
+                                    minWidth="0">
+                                    <children>
+                                        <TableView
+                                            fx:id="reportTable">
+                                            <columnResizePolicy>
+                                                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                            </columnResizePolicy>
+                                        </TableView>
+                                    </children>
+                                </StackPane>
+                            </items>
+                        </SplitPane>                        
+                        <GridPane
+                            id="transactionDetails"
+                            styleClass="form"
+                            minWidth="-Infinity">
+                            <columnConstraints>
+                                <ColumnConstraints
+                                    minWidth="-Infinity"
+                                    prefWidth="70"
+                                    maxWidth="100"
+                                    hgrow="SOMETIMES" />
+                                <ColumnConstraints
+                                    minWidth="-Infinity"
+                                    prefWidth="150"
+                                    hgrow="SOMETIMES" />
+                            </columnConstraints>                                                                    
+                            <children>
+                                <Label fx:id="lbTransactionDetailsTitle"
+                                       text=""
+                                       GridPane.columnIndex="0"
+                                       GridPane.columnSpan="2"
+                                       GridPane.rowIndex="0">
+                                    <font>
+                                        <Font size="24.0" />
+                                    </font>
+                                </Label>
+                                <Label
+                                    alignment="CENTER_RIGHT"
+                                    text="Név"
+                                    GridPane.columnIndex="0"
+                                    GridPane.rowIndex="1" />
+                                <TextField
+                                    fx:id="transactionDetailsNameTextField"
+                                    GridPane.columnIndex="1"
+                                    GridPane.rowIndex="1" />
+                                <Label
+                                    alignment="CENTER_RIGHT"
+                                    text="Összeg"
+                                    GridPane.columnIndex="0"
+                                    GridPane.rowIndex="2" />
+                                <TextField
+                                    fx:id="transactionDetailsAmountTextField"
+                                    GridPane.columnIndex="1"
+                                    GridPane.rowIndex="2" />
+                                <Label
+                                    alignment="CENTER_RIGHT"
+                                    text="Dátum"
+                                    GridPane.columnIndex="0"
+                                    GridPane.rowIndex="3" />
+                                <DatePicker
+                                    fx:id="transactionDetailsDatePicker"
+                                    GridPane.columnIndex="1"
+                                    GridPane.rowIndex="3" />
+                                <Label
+                                    alignment="CENTER_RIGHT"
+                                    text="Gyakoriság"
+                                    GridPane.columnIndex="0"
+                                    GridPane.rowIndex="4"
+                                    GridPane.rowSpan="2" />
+                                <TextField
+                                    fx:id="transactionDetailsRegularityAmountTextField"
+                                    GridPane.columnIndex="1"
+                                    GridPane.rowIndex="4" />
+                                <ChoiceBox
+                                    fx:id="transactionDetailsRegularityUnitChoiceBox"
+                                    GridPane.columnIndex="1"
+                                    GridPane.rowIndex="5" />
+                                <Label
+                                    alignment="CENTER_RIGHT"
+                                    text="Kategória"
+                                    GridPane.columnIndex="0"
+                                    GridPane.rowIndex="6" />
+                                <TitledPane
+                                    fx:id="transactionDetailsCategoryTitledPane"
+                                    expanded="false"
+                                    graphicTextGap="80.0"
+                                    GridPane.columnIndex="1"
+                                    GridPane.rowIndex="6">
+                                    <content>
+                                        <StackPane>
+                                            <children>
+                                                <TreeView
+                                                    fx:id="transactionDetailsCategoryTreeView"
+                                                    showRoot="false" />
+                                            </children>
+                                        </StackPane>
+                                    </content>
+                                </TitledPane>
+                                <Label
+                                    alignment="CENTER_RIGHT"
+                                    text="Leírás"
+                                    GridPane.columnIndex="0"
+                                    GridPane.rowIndex="7"/>
+                                <TextArea
+                                    fx:id="transactionDetailsDescription"
+                                    GridPane.columnIndex="1"
+                                    GridPane.rowIndex="7" />
+                                <Button
+                                    fx:id="addTransactionBtn"
+                                    styleClass="wideButton"
+                                    text="Hozzáad"
+                                    onAction="#handleAddTransactionBtnClick"
+                                    GridPane.columnIndex="0"
+                                    GridPane.columnSpan="2"
+                                    GridPane.rowIndex="8" />
+                                <Button
+                                    fx:id="modifyTransactionBtn"
+                                    styleClass="wideButton"
+                                    text="Módosít"
+                                    disable="true"
+                                    onAction="#handleModifyTransactionBtnClick"
+                                    GridPane.columnIndex="0"
+                                    GridPane.columnSpan="2"
+                                    GridPane.rowIndex="9" />
+                                <Button
+                                    fx:id="deleteTransactionBtn"
+                                    styleClass="wideButton"
+                                    text="Töröl"
+                                    disable="true"
+                                    onAction="#handleDeleteTransactionBtnClick" 
+                                    GridPane.columnIndex="0"
+                                    GridPane.columnSpan="2"
+                                    GridPane.rowIndex="10" />
+                            </children>
+                        </GridPane>                                   
+                    </items>
+                </SplitPane>
+                <HBox
+                    fx:id="categoriesPane"
+                    alignment="TOP_CENTER"
+                    fillHeight="false"
+                    visible="false">
+                    <padding>
+                        <Insets
+                            bottom="0"
+                            left="0"
+                            right ="0"
+                            top="15"/>
+                    </padding>
+                    <children>
+                        <GridPane
+                            styleClass="form">
+                            <columnConstraints>
+                                <ColumnConstraints />
+                                <ColumnConstraints />
+                                <ColumnConstraints />
+                            </columnConstraints>              
+                            <children>
+                                <Label text="Részletek"
+                                       GridPane.columnIndex="0"
+                                       GridPane.columnSpan="2"
+                                       GridPane.rowIndex="0">
+                                    <font>
+                                        <Font size="24.0" />
+                                    </font>                                
+                                </Label>
+                                <Label
+                                    text="Név"
+                                    GridPane.columnIndex="0"
+                                    GridPane.rowIndex="1" />
+                                <Label
+                                    text="Szülő"
+                                    GridPane.columnIndex="0"
+                                    GridPane.rowIndex="2" />
+                                <TextField
+                                    fx:id="categoryNameTextField"
+                                    GridPane.columnIndex="1"
+                                    GridPane.rowIndex="1"/>
+                                <TitledPane
+                                    fx:id="categoryParentTitledPane"
+                                    text=" "
+                                    expanded="true"
+                                    collapsible="false"
+                                    GridPane.columnIndex="1"
+                                    GridPane.rowIndex="2">
+                                    <content>
+                                        <StackPane>
+                                            <children>
+                                                <TreeView
+                                                    fx:id="categoryParentTreeView"
+                                                    showRoot="false" />
+                                            </children>
+                                        </StackPane>
+                                    </content>
+                                </TitledPane>                           
+                                <Button
+                                    fx:id="addCategoryButton"
+                                    text="Hozzáad"
+                                    onAction="#handleAddCategoryButtonAction"
+                                    styleClass="wideButton"
+                                    GridPane.columnIndex="1"
+                                    GridPane.rowIndex="3"/>
+                                <Button
+                                    fx:id="modifyCategoryButton"
+                                    text="Módosít"
+                                    disable="true"
+                                    styleClass="wideButton"
+                                    onAction="#handleModifyCategoryButtonAction"
+                                    GridPane.columnIndex="1"
+                                    GridPane.rowIndex="4"/>
+                                <Button
+                                    fx:id="deleteCategoryButton"
+                                    text="Töröl"
+                                    disable="true"
+                                    styleClass="wideButton"
+                                    onAction="#handleDeleteCategoryButtonAction"
+                                    GridPane.columnIndex="1"
+                                    GridPane.rowIndex="5"/>
+                                <Label text="Kategóriák"
+                                       GridPane.columnIndex="2"
+                                       GridPane.rowIndex="0">
+                                    <font>
+                                        <Font size="24.0" />
+                                    </font>
+                                </Label>
+                                <TreeView
+                                    fx:id="categoryTreeView"
+                                    showRoot="false"
+                                    GridPane.columnIndex="2"
+                                    GridPane.rowIndex="1"
+                                    GridPane.rowSpan="5"/>
+                            </children>
+                        </GridPane>
+                    </children>
+                </HBox>
+            </children>
+        </StackPane>
+    </center>
+</BorderPane>

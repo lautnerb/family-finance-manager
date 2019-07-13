@@ -1,0 +1,10 @@
+.form {
+    -fx-padding: 10px 5px;
+    -fx-vgap: 5px;
+    -fx-hgap: 5px;
+}
+
+.wideButton{
+    -fx-max-width: Infinity;
+}
+
